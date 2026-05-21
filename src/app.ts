@@ -4,6 +4,9 @@ import path from "path";
 dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 import express, { type Application, type Request, type Response } from "express";
 import initDB from "./config/db";
+import userRouter from "./modules/user/user.route";
+
+
 
 
 const app: Application = express();
@@ -23,5 +26,7 @@ app.get("/", (req: Request, res: Response) => {
     platform: "Programming Hero",
   });
 });
+
+app.use("/users", userRouter);
 
 export default app;
