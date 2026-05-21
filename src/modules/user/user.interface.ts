@@ -5,3 +5,7 @@ export interface IUser {
   password: string;
   role: "contributor" | "maintainer"; 
 }
+export interface loginData {
+  email: string;
+  password: string;
+}

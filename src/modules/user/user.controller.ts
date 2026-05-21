@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
-import { registerUserService } from "./user.service";
+import { loginUserService, registerUserService } from "./user.service";
+import { log } from "node:console";
 
 const registerUserController = async (req: Request, res: Response) => {
    try {
@@ -17,5 +18,22 @@ const registerUserController = async (req: Request, res: Response) => {
       });
    }
 }
+const loginUserController = async (req: Request,res: Response) => {
+   try {
+      const result = await loginUserService(req.body);
+      if(result.success){
+         res.status(200).json(result);
+      }else{
+         res.status(400).json(result);
+      }
+   } catch (error: any) {
+      res.status(500).json({
+         success: false,
+         message: error.message,
+         error: error
+      });
+   }
 
-export { registerUserController };
+}
+
+export { registerUserController,loginUserController};
