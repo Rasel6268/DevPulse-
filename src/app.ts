@@ -5,11 +5,13 @@ dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 import express, { type Application, type Request, type Response } from "express";
 import initDB from "./config/db";
 import userRouter from "./modules/user/user.route";
+import cookieParser from 'cookie-parser';
 
 
 
 
 const app: Application = express();
+app.use(cookieParser());
 app.use(express.json());
 
 //database connection

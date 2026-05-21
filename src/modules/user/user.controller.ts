@@ -1,6 +1,5 @@
 import type { Request, Response } from "express";
 import { loginUserService, registerUserService } from "./user.service";
-import { log } from "node:console";
 
 const registerUserController = async (req: Request, res: Response) => {
    try {
@@ -21,6 +20,12 @@ const registerUserController = async (req: Request, res: Response) => {
 const loginUserController = async (req: Request,res: Response) => {
    try {
       const result = await loginUserService(req.body);
+      res.cookie("token",result.token,{
+         httpOnly:true,
+         secure:true,
+         sameSite: "strict",
+         maxAge: 60 * 60 * 1000 * 24,
+      })
       if(result.success){
          res.status(200).json(result);
       }else{
