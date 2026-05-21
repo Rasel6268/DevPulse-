@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { loginUserService, registerUserService } from "./user.service";
+import { getAllUserService, loginUserService, registerUserService } from "./user.service";
 
 const registerUserController = async (req: Request, res: Response) => {
    try {
@@ -40,5 +40,17 @@ const loginUserController = async (req: Request,res: Response) => {
    }
 
 }
+const getAllUserController =async(req: Request,res: Response) => {
+   try {
+      const result = await getAllUserService();
+      res.status(200).json(result);
+   } catch (error: any) {
+      res.status(500).json({
+         success: false,
+         message: error.message,
+         error: error
+      });
+   }
+}
 
-export { registerUserController,loginUserController};
+export { registerUserController,loginUserController,getAllUserController};

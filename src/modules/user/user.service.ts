@@ -81,4 +81,22 @@ const loginUserService = async (loginData: loginData) => {
     };
   }
 };
-export { registerUserService, loginUserService };
+const getAllUserService = async () => {
+  try {
+    const res = await pool.query(`
+      SELECT id, name, email, role, created_at, updated_at FROM users
+    `);
+    return {
+      success: true,
+      message: "Users retrieved successfully",
+      data: res.rows,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message,
+      error: error,
+    };
+  }
+}
+export { registerUserService, loginUserService, getAllUserService };
