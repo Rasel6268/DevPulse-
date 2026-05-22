@@ -66,21 +66,53 @@ const getIssuesByIdService = async (id: string) => {
   try {
     const res = await pool.query(
       `
-        SELECT * FROM issues WHERE id=$1 
-        `,
-      [id],
+      SELECT * FROM issues WHERE id = $1
+      `,
+      [id]
     );
 
     if (res.rows.length === 0) {
       return {
         success: false,
-        message: "Issues not found",
+        message: "Issue not found",
       };
     }
+
+    const issue = res.rows[0];
+
+    const userId = issue.reporter_id;
+
+    const userData = await pool.query(
+      `
+      SELECT name, email, role
+      FROM users
+      WHERE id = $1
+      `,
+      [userId]
+    );
+
+    const user = userData.rows[0];
+
+    const singleIssue = {
+      id: issue.id,
+      title: issue.title,
+      description: issue.description,
+      type: issue.type,
+      status: issue.status,
+      reporter: {
+        id: userId,
+        name: user?.name ,
+        email: user?.email ,
+        role: user?.role,
+      },
+      created_at: issue.created_at,
+      updated_at: issue.updated_at,
+    };
+
     return {
       success: true,
       message: "Issue found",
-      issue: res.rows,
+      issue: singleIssue,
     };
   } catch (error: any) {
     return {
@@ -144,11 +176,11 @@ const deleteIssuesService = async (id: string) => {
       message: "Issue deleted successfully",
       data: res.rows[0],
     };
-  } catch (error:any) {
-    return{
-        success : false,
-        message: error.message
-    }
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message,
+    };
   }
 };
 
