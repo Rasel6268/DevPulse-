@@ -5,6 +5,7 @@ dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 import express, { type Application, type Request, type Response } from "express";
 import initDB from "./config/db";
 import userRouter from "./modules/user/user.route";
+import issuesRouter from './modules/issues/issues.route';
 import cookieParser from 'cookie-parser';
 
 
@@ -30,5 +31,6 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/users", userRouter);
+app.use('/issues',issuesRouter)
 
 export default app;
