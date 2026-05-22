@@ -3,8 +3,10 @@ import type { IUser } from "../user/user.interface";
 import type { CreateIssue } from "./createIssue.interface";
 import type { UpdateIssue } from "./updateIssue.interface";
 
-
-const createIssuesService = async (issuesData: CreateIssue, userData: IUser) => {
+const createIssuesService = async (
+  issuesData: CreateIssue,
+  userData: IUser,
+) => {
   try {
     const { title, description, type } = issuesData;
     if (!title || !description || !type) {
@@ -90,7 +92,7 @@ const getIssuesByIdService = async (id: string) => {
 const updateIssueService = async (id: string, updateData: UpdateIssue) => {
   try {
     const { title, description, type, status } = updateData;
-     const res = await pool.query(
+    const res = await pool.query(
       `
       UPDATE issues SET
         title = COALESCE($1, title),
@@ -100,7 +102,7 @@ const updateIssueService = async (id: string, updateData: UpdateIssue) => {
       WHERE id = $5
       RETURNING *
       `,
-      [title, description, type, status, id]
+      [title, description, type, status, id],
     );
     if (res.rows.length === 0) {
       return {
@@ -121,9 +123,39 @@ const updateIssueService = async (id: string, updateData: UpdateIssue) => {
     };
   }
 };
+const deleteIssuesService = async (id: string) => {
+  try {
+    const res = await pool.query(
+      `
+        DELETE FROM issues 
+        WHERE id = $1
+         RETURNING *;
+        `,
+      [id],
+    );
+    if (res.rowCount === 0) {
+      return {
+        success: false,
+        message: "Issue not found",
+      };
+    }
+    return {
+      success: true,
+      message: "Issue deleted successfully",
+      data: res.rows[0],
+    };
+  } catch (error:any) {
+    return{
+        success : false,
+        message: error.message
+    }
+  }
+};
+
 export {
   createIssuesService,
   getAllIssuesService,
   getIssuesByIdService,
   updateIssueService,
+  deleteIssuesService,
 };

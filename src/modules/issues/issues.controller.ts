@@ -1,5 +1,11 @@
 import type { Request, Response } from "express";
-import { createIssuesService, getAllIssuesService, getIssuesByIdService, updateIssueService } from "./issues.service";
+import {
+  createIssuesService,
+  deleteIssuesService,
+  getAllIssuesService,
+  getIssuesByIdService,
+  updateIssueService,
+} from "./issues.service";
 import type { IUser } from "../user/user.interface";
 
 interface AuthenticatedRequest extends Request {
@@ -67,22 +73,38 @@ const getIssuesByIdController = async (req: Request, res: Response) => {
     });
   }
 };
-const updateIssueController =async(req:Request,res:Response) => {
-    
+const updateIssueController = async (req: Request, res: Response) => {
   try {
-    const {id} = req.params
-    const result = await updateIssueService(id as string,req.body)
-    if(!result.success){
-        return res.status(400).json(result)
+    const { id } = req.params;
+    const result = await updateIssueService(id as string, req.body);
+    if (!result.success) {
+      return res.status(400).json(result);
     }
     return res.status(200).json(result);
-
-  } catch (error:any) {
-   return res.status(500).json({
+  } catch (error: any) {
+    return res.status(500).json({
       success: false,
       message: error.message || "Internal server error",
     });
   }
-}
+};
+const deleteIssueController = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const result = await deleteIssuesService(id as string);
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+    return res.status(200).json(result);
+  } catch (error: any) {
+    return res.status(500).json(error);
+  }
+};
 
-export { createIssuesController, getIssuesController,getIssuesByIdController,updateIssueController };
+export {
+  createIssuesController,
+  getIssuesController,
+  getIssuesByIdController,
+  updateIssueController,
+  deleteIssueController,
+};
