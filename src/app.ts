@@ -30,7 +30,7 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
-app.use("/users", userRouter);
-app.use('/issues',issuesRouter)
+app.use("/api/auth", userRouter);
+app.use('/api/issues',issuesRouter)
 
 export default app;

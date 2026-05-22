@@ -73,10 +73,12 @@ const getIssuesByIdController = async (req: Request, res: Response) => {
     });
   }
 };
-const updateIssueController = async (req: Request, res: Response) => {
+const updateIssueController = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const result = await updateIssueService(id as string, req.body);
+    const user = req.user;
+    const updateData = req.body
+    const result = await updateIssueService(id as string, updateData,user as IUser);
     if (!result.success) {
       return res.status(400).json(result);
     }

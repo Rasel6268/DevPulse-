@@ -3,7 +3,7 @@ import { getAllUserController, loginUserController, registerUserController } fro
 import { authMiddleware } from '../../middleware/auth/auth.middleware';
 const router = express.Router();
 
-router.post('/register', registerUserController);
+router.post('/signup', registerUserController);
 router.post('/login', loginUserController);
 router.get('/',authMiddleware, getAllUserController);
 

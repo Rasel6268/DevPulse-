@@ -141,7 +141,7 @@ const getIssuesByIdService = async (id: string) => {
     };
   }
 };
-const updateIssueService = async (id: string, updateData: UpdateIssue) => {
+const updateIssueService = async (id: string, updateData: UpdateIssue, user: IUser) => {
   try {
     const { title, description, type, status } = updateData;
     const res = await pool.query(
@@ -162,6 +162,18 @@ const updateIssueService = async (id: string, updateData: UpdateIssue) => {
         message: "Issue never found",
         data: {},
       };
+    }
+    const issue = res.rows[0]
+
+    const isMaintainer = user.role === "maintainer";
+    const isOwner = issue.reporter_id === user.id;
+    if (!isMaintainer) {
+      if (!isOwner || issue.status !== "open") {
+        return {
+          success: false,
+          message: "You are not allowed to update this issue",
+        };
+      }
     }
     return {
       sucess: true,
