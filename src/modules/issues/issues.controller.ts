@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { createIssuesService } from "./issues.service";
+import { createIssuesService, getAllIssuesService } from "./issues.service";
 import type { IUser } from "../user/user.interface";
 
 interface AuthenticatedRequest extends Request {
@@ -22,5 +22,23 @@ const createIssuesController = async (
     });
   }
 };
+const getIssuesController = async (req: Request, res: Response) => {
+  try {
+    const result = await getAllIssuesService();
 
-export { createIssuesController };
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+
+    return res.status(200).json(result);
+  } catch (error: any) {
+    console.error("GetIssuesController Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
+  }
+};
+
+export { createIssuesController,getIssuesController };
