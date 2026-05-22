@@ -30,7 +30,7 @@ const createIssuesController = async (
 };
 const getIssuesController = async (req: Request, res: Response) => {
   try {
-    const result = await getAllIssuesService();
+    const result = await getAllIssuesService(req.query);
 
     if (!result.success) {
       return res.status(400).json(result);

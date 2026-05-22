@@ -36,22 +36,42 @@ const createIssuesService = async (
     };
   }
 };
-const getAllIssuesService = async () => {
+const getAllIssuesService = async (query: any) => {
   try {
-    const result = await pool.query(`
-      SELECT * FROM issues
-    `);
+    const { sort = "newest", type, status } = query;
 
-    if (result.rows.length === 0) {
-      return {
-        success: true,
-        message: "No issues available",
-        issues: [],
-      };
+    let baseQuery = `SELECT * FROM issues`;
+    const conditions: string[] = [];
+    const values: any[] = [];
+
+    if (type) {
+      values.push(type);
+      conditions.push(`type = $${values.length}`);
     }
+
+    if (status) {
+      values.push(status);
+      conditions.push(`status = $${values.length}`);
+    }
+
+    if (conditions.length > 0) {
+      baseQuery += ` WHERE ` + conditions.join(" AND ");
+    }
+
+    if (sort === "oldest") {
+      baseQuery += ` ORDER BY created_at ASC`;
+    } else {
+      baseQuery += ` ORDER BY created_at DESC`;
+    }
+
+    const result = await pool.query(baseQuery, values);
+
     return {
       success: true,
-      message: "All issues retrieved successfully",
+      message:
+        result.rows.length === 0
+          ? "No issues available"
+          : "Issues retrieved successfully",
       issues: result.rows,
     };
   } catch (error: any) {
@@ -68,7 +88,7 @@ const getIssuesByIdService = async (id: string) => {
       `
       SELECT * FROM issues WHERE id = $1
       `,
-      [id]
+      [id],
     );
 
     if (res.rows.length === 0) {
@@ -88,7 +108,7 @@ const getIssuesByIdService = async (id: string) => {
       FROM users
       WHERE id = $1
       `,
-      [userId]
+      [userId],
     );
 
     const user = userData.rows[0];
@@ -101,8 +121,8 @@ const getIssuesByIdService = async (id: string) => {
       status: issue.status,
       reporter: {
         id: userId,
-        name: user?.name ,
-        email: user?.email ,
+        name: user?.name,
+        email: user?.email,
         role: user?.role,
       },
       created_at: issue.created_at,
