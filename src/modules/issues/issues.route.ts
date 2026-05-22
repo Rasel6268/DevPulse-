@@ -20,7 +20,7 @@ router.post(
 router.get("/", getIssuesController);
 router.get("/:id", authMiddleware, getIssuesByIdController);
 router.put(
-  "/update/:id",
+  "/:id",
   authMiddleware,
   roleMiddleware(["maintainer", "contributor"]),
   updateIssueController
