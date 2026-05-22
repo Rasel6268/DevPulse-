@@ -1,8 +1,10 @@
 import pool from "../../config/connection/Index";
 import type { IUser } from "../user/user.interface";
-import type { Issues } from "./issues.interface";
+import type { CreateIssue } from "./createIssue.interface";
+import type { UpdateIssue } from "./updateIssue.interface";
 
-const createIssuesService = async (issuesData: Issues, userData: IUser) => {
+
+const createIssuesService = async (issuesData: CreateIssue, userData: IUser) => {
   try {
     const { title, description, type } = issuesData;
     if (!title || !description || !type) {
@@ -58,32 +60,71 @@ const getAllIssuesService = async () => {
     };
   }
 };
-const getIssuesByIdService = async(id: string) => {
- try {
-    const res =await pool.query( `
+const getIssuesByIdService = async (id: string) => {
+  try {
+    const res = await pool.query(
+      `
         SELECT * FROM issues WHERE id=$1 
-        `,[id])
+        `,
+      [id],
+    );
 
-        if(res.rows.length === 0){
-            return {
-                success: false,
-                message: "Issues not found"
-            }
-        }
-        return{
-            success: true,
-            message: "Issue found",
-            issue: res.rows
-        }
- } catch (error :any) {
-    return {
+    if (res.rows.length === 0) {
+      return {
         success: false,
-        message: error.message
+        message: "Issues not found",
+      };
     }
- }
-}
-const updateIssueService = async(req: Request,res:Response) => {
+    return {
+      success: true,
+      message: "Issue found",
+      issue: res.rows,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+};
+const updateIssueService = async (id: string, updateData: UpdateIssue) => {
+  try {
+    const { title, description, type, status } = updateData;
+     const res = await pool.query(
+      `
+      UPDATE issues SET
+        title = COALESCE($1, title),
+        description = COALESCE($2, description),
+        type = COALESCE($3, type),
+        status = COALESCE($4, status)
+      WHERE id = $5
+      RETURNING *
+      `,
+      [title, description, type, status, id]
+    );
+    if (res.rows.length === 0) {
+      return {
+        success: false,
+        message: "Issue never found",
+        data: {},
+      };
+    }
+    return {
+      sucess: true,
+      message: "Issue Update successfully!!",
+      issue: res.rows[0],
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+};
 
-}
-
-export { createIssuesService, getAllIssuesService,getIssuesByIdService,updateIssueService};
+export {
+  createIssuesService,
+  getAllIssuesService,
+  getIssuesByIdService,
+  updateIssueService,
+};

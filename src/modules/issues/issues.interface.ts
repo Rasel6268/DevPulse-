@@ -1,6 +1,9 @@
-export interface Issues {
-  id?: number;
+import type { IssueStatus, IssueType } from "./issue.type";
+
+export interface Issue {
+  id: number;
   title: string;
   description: string;
-  type: "bug" | "feature_request";
+  type: IssueType;
+  status: IssueStatus;
 }
