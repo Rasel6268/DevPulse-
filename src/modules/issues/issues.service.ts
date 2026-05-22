@@ -121,7 +121,6 @@ const updateIssueService = async (id: string, updateData: UpdateIssue) => {
     };
   }
 };
-
 export {
   createIssuesService,
   getAllIssuesService,

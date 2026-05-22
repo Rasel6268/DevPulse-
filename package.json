@@ -5,8 +5,8 @@
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "build": "tsc",
+    "dev": "tsx watch ./src/server.ts",
+    "build": "tsup",
     "start": "node dist/server.js"
   },
   "dependencies": {
@@ -23,6 +23,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.9.1",
     "@types/pg": "^8.20.0",
+    "tsup": "^8.5.1",
     "tsx": "^4.22.3",
     "typescript": "^6.0.3"
   }
