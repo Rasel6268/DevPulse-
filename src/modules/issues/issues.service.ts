@@ -58,5 +58,32 @@ const getAllIssuesService = async () => {
     };
   }
 };
+const getIssuesByIdService = async(id: string) => {
+ try {
+    const res =await pool.query( `
+        SELECT * FROM issues WHERE id=$1 
+        `,[id])
 
-export { createIssuesService, getAllIssuesService };
+        if(res.rows.length === 0){
+            return {
+                success: false,
+                message: "Issues not found"
+            }
+        }
+        return{
+            success: true,
+            message: "Issue found",
+            issue: res.rows
+        }
+ } catch (error :any) {
+    return {
+        success: false,
+        message: error.message
+    }
+ }
+}
+const updateIssueService = async(req: Request,res:Response) => {
+
+}
+
+export { createIssuesService, getAllIssuesService,getIssuesByIdService,updateIssueService};
